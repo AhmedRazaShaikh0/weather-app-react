@@ -3,170 +3,59 @@ import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 
 export default function WeatherCard() {
-  const ref = useRef<HTMLInputElement>(null);
+  const ref = useRef<any>(null);
   const [testing, setTesting] = useState<any>([]);
   const [state, setState] = useState<any>(false);
-  console.log("testing", testing);
-  // const LOCATION = "karachi";
-  // console.log("data", data);
-  // let LOCATION: any = "";
+  const [text, setText] = useState<any>("Enter Your Location");
   const LOCATION = ref?.current?.value;
+
   function handleSubmit(e: any) {
     e.preventDefault();
     setState(!state);
-
-    // console.log(LOCATION);
   }
   useEffect(() => {
-    // fetch(
-    //   `https://api.weatherapi.com/v1/current.json?key=168e245731fe44d0a5051548230707&q=karachi&aqi=no`
-    // )
-    // if (LOCATION) {
-    //   fetch(
-    //     `https://api.weatherapi.com/v1/current.json?key=168e245731fe44d0a5051548230707&q=${LOCATION}&aqi=no`
-    //   )
-    //     .then((res) => res.json())
-    //     .then((data) => {
-    //       // setTesting(data.res); // Update the state with the new array
-    //       !data.error &&
-    //         setTesting((prevObjects: any) => [...prevObjects, data]);
-    //       console.log("data", data);
-    //     });
-    //   // .then((error) => console.log("error", error));
-    //   // const data = await res.json();
-    // }
-
     (async () => {
       try {
-        const res = await fetch(
-          `https://api.weatherapi.com/v1/current.json?key=168e245731fe44d0a5051548230707&q=${LOCATION}&aqi=no`
-        );
-        const data = await res.json();
-        // console.log(data)
-        // .then((res) => res.json())
-        // .then((data) => {
-        //   // setTesting(data.res); // Update the state with the new array
-        !data.error && setTesting((prevState: any) => [...prevState, data]);
-        //   console.log("data", data);
-        // });
+        if (LOCATION) {
+          const data: any = await axios.get(
+            `https://api.weatherapi.com/v1/current.json?key=168e245731fe44d0a5051548230707&q=${LOCATION}&aqi=no`
+          );
+          console.log("🚀 ~ file: WeatherCard.tsx:24 ~ data:", data.data);
+          setTesting((prevState: any) => [...prevState, data.data]);
+          if (ref.current) ref.current.value = "";
+        }
       } catch (error) {
         console.log("error", error);
+        setText("Enter Correct Location");
       }
     })();
   }, [state]);
-  // function handleClick() {
-  //   setState(!state);
-  // }
-
-  //   useEffect(() => {
-  //     axios
-  //       .get(
-  //         `https://api.weatherapi.com/v1/current.json?key=168e245731fe44d0a5051548230707&q=karachi&aqi=no`
-  //       )
-  //       .then((response) => console.log(response));
-  //     //   console.log("res", res);
-  //   }, []);
-
-  // function handleClick() {
-  // console.log("first");
-  // const variable = {
-  //   value: "hello",
-  //   value2: "world",
-  // };
-  // setTesting((prevObjects: any) => [...prevObjects, res]);
-  // }
-
-  // const testingg = [
-  //   {
-  //     bg: "",
-  //     icon: "/cloudy-day-1.svg",
-  //     deg: 26,
-  //     feelslike: 30,
-  //     wind: 30,
-  //     humidity: 30,
-  //     visibility: 10,
-  //     pressure: 25,
-  //     cloud: 34,
-  //   },
-  //   {
-  //     bg: "",
-  //     icon: "/cloudy-day-1.svg",
-  //     deg: 26,
-  //     feelslike: 30,
-  //     wind: 30,
-  //     humidity: 30,
-  //     visibility: 10,
-  //     pressure: 25,
-  //     cloud: 34,
-  //   },
-  //   {
-  //     bg: "",
-  //     icon: "/cloudy-day-1.svg",
-  //     deg: 26,
-  //     feelslike: 30,
-  //     wind: 30,
-  //     humidity: 30,
-  //     visibility: 10,
-  //     pressure: 25,
-  //     cloud: 34,
-  //   },
-  //   {
-  //     bg: "",
-  //     icon: "/cloudy-day-1.svg",
-  //     deg: 26,
-  //     feelslike: 30,
-  //     wind: 30,
-  //     humidity: 30,
-  //     visibility: 10,
-  //     pressure: 25,
-  //     cloud: 34,
-  //   },
-  //   {
-  //     bg: "",
-  //     icon: "/cloudy-day-1.svg",
-  //     deg: 26,
-  //     feelslike: 30,
-  //     wind: 30,
-  //     humidity: 30,
-  //     visibility: 10,
-  //     pressure: 25,
-  //     cloud: 34,
-  //   },
-  //   {
-  //     bg: "",
-  //     icon: "/cloudy-day-1.svg",
-  //     deg: 26,
-  //     feelslike: 30,
-  //     wind: 30,
-  //     humidity: 30,
-  //     visibility: 10,
-  //     pressure: 25,
-  //     cloud: 34,
-  //   },
-  // ];
-
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <input type="text" name="" id="" ref={ref} required />
-        <button type="submit">Click</button>
+    <div className="w-full grid my-10">
+      <form
+        onSubmit={handleSubmit}
+        className="m-auto flex justify-items-center grid-flow-col"
+      >
+        <input
+          type="text"
+          name=""
+          id=""
+          ref={ref}
+          placeholder="Enter Your Location"
+          required
+          className="p-2 text-black rounded-full"
+        />
+        <button
+          type="submit"
+          className=" bg-black text-white p-2 rounded-full"
+        >
+          Submit
+        </button>
       </form>
-      {/* {testing.map((test: any, index: number) => (
-        <div key={index}>
-          <h1>{test.current?.temp_c}</h1>
-        </div>
-      ))} */}
-      {/* {testing */}
-      {/* {testing === null ? (
-        <div>No Data Exists</div>
-      ) ?  */}
-      {/* {testing === null ? (
-        <div>No Data Exists</div>
-      ) : */}
       {testing.length === 0 ? (
-        <div>Enter Correct Location</div>
+        <div className="text-center text-white mt-5">{text}</div>
       ) : (
-        <div className="grid grid-cols-3 gap-5 max-w-6xl m-auto text-black">
+        <div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 px-5 gap-5 max-w-7xl m-auto mt-5 text-black w-full">
           {testing.reverse().map((test: any, index: number) => (
             <div className={`bg-white p-5 rounded-2xl`} key={index}>
               <div className="flex justify-between">
