@@ -21,20 +21,38 @@ export default function WeatherCard() {
     // fetch(
     //   `https://api.weatherapi.com/v1/current.json?key=168e245731fe44d0a5051548230707&q=karachi&aqi=no`
     // )
-    if (LOCATION) {
-      fetch(
-        `https://api.weatherapi.com/v1/current.json?key=168e245731fe44d0a5051548230707&q=${LOCATION}&aqi=no`
-      )
-        .then((res) => res.json())
-        .then((data) => {
-          // setTesting(data.res); // Update the state with the new array
-          !data.error &&
-            setTesting((prevObjects: any) => [...prevObjects, data]);
-          console.log("data", data);
-        });
-      // .then((error) => console.log("error", error));
-      // const data = await res.json();
-    }
+    // if (LOCATION) {
+    //   fetch(
+    //     `https://api.weatherapi.com/v1/current.json?key=168e245731fe44d0a5051548230707&q=${LOCATION}&aqi=no`
+    //   )
+    //     .then((res) => res.json())
+    //     .then((data) => {
+    //       // setTesting(data.res); // Update the state with the new array
+    //       !data.error &&
+    //         setTesting((prevObjects: any) => [...prevObjects, data]);
+    //       console.log("data", data);
+    //     });
+    //   // .then((error) => console.log("error", error));
+    //   // const data = await res.json();
+    // }
+
+    (async () => {
+      try {
+        const res = await fetch(
+          `https://api.weatherapi.com/v1/current.json?key=168e245731fe44d0a5051548230707&q=${LOCATION}&aqi=no`
+        );
+        const data = await res.json();
+        // console.log(data)
+        // .then((res) => res.json())
+        // .then((data) => {
+        //   // setTesting(data.res); // Update the state with the new array
+        !data.error && setTesting((prevState: any) => [...prevState, data]);
+        //   console.log("data", data);
+        // });
+      } catch (error) {
+        console.log("error", error);
+      }
+    })();
   }, [state]);
   // function handleClick() {
   //   setState(!state);
@@ -130,7 +148,7 @@ export default function WeatherCard() {
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <input type="text" name="" id="" ref={ref} />
+        <input type="text" name="" id="" ref={ref} required />
         <button type="submit">Click</button>
       </form>
       {/* {testing.map((test: any, index: number) => (
@@ -139,75 +157,87 @@ export default function WeatherCard() {
         </div>
       ))} */}
       {/* {testing */}
-      <div className="grid grid-cols-3 gap-5 max-w-6xl m-auto text-black">
-        {testing.reverse().map((test: any, index: number) => (
-          <div className={`bg-white p-5 rounded-2xl`} key={index}>
-            <div className="flex justify-between">
-              <div className="w-1/2">
-                <h1 className="font-bold">Current Weather</h1>
-                <h1>
-                  {test.location.name}, {test.location.country}
+      {/* {testing === null ? (
+        <div>No Data Exists</div>
+      ) ?  */}
+      {/* {testing === null ? (
+        <div>No Data Exists</div>
+      ) : */}
+      {testing.length === 0 ? (
+        <div>Enter Correct Location</div>
+      ) : (
+        <div className="grid grid-cols-3 gap-5 max-w-6xl m-auto text-black">
+          {testing.reverse().map((test: any, index: number) => (
+            <div className={`bg-white p-5 rounded-2xl`} key={index}>
+              <div className="flex justify-between">
+                <div className="w-1/2">
+                  <h1 className="font-bold">Current Weather</h1>
+                  <h1>
+                    {test.location.name}, {test.location.country}
+                  </h1>
+                </div>
+                <button className="bg-black w-1/2 text-white px-6 py-2 text-sm h-full rounded-md hover:bg-white hover:text-black hover:border-black border hover:border transition-all duration-300">
+                  View Details
+                </button>
+              </div>
+              <div className="flex items-center justify-center">
+                <img
+                  src={test.current.condition.icon}
+                  alt=""
+                  width={100}
+                  height={100}
+                />
+                <h1 className="font-bold text-6xl">
+                  {test.current.temp_c}
+                  <span className="text-2xl align-top">°C</span>
                 </h1>
               </div>
-              <button className="bg-black w-1/2 text-white px-6 py-2 text-sm h-full rounded-md hover:bg-white hover:text-black hover:border-black border hover:border transition-all duration-300">
-                View Details
-              </button>
-            </div>
-            <div className="flex items-center justify-center">
-              <img
-                src={test.current.condition.icon}
-                alt=""
-                width={100}
-                height={100}
-              />
-              <h1 className="font-bold text-6xl">
-                {test.current.temp_c}
-                <span className="text-2xl align-top">°C</span>
-              </h1>
-            </div>
-            <div className="flex justify-between">
-              <div>
-                <h1>
-                  Feelslike:
-                  <br />{" "}
-                  <span className="font-bold">{test.current.feelslike_c}°</span>
-                </h1>
-                <h1>
-                  Wind:
-                  <br />{" "}
-                  <span className="font-bold">
-                    {test.current.wind_kph} km/h
-                  </span>
-                </h1>
-                <h1>
-                  Humidity:
-                  <br />{" "}
-                  <span className="font-bold">{test.current.humidity} %</span>
-                </h1>
-              </div>
-              <div>
-                <h1>
-                  Visibility:
-                  <br />{" "}
-                  <span className="font-bold">{test.current.vis_km} km</span>
-                </h1>
-                <h1>
-                  Pressure:
-                  <br />{" "}
-                  <span className="font-bold">
-                    {test.current.pressure_mb} mb
-                  </span>
-                </h1>
-                <h1>
-                  Cloud:
-                  <br />{" "}
-                  <span className="font-bold">{test.current.cloud} %</span>
-                </h1>
+              <div className="flex justify-between">
+                <div>
+                  <h1>
+                    Feelslike:
+                    <br />{" "}
+                    <span className="font-bold">
+                      {test.current.feelslike_c}°
+                    </span>
+                  </h1>
+                  <h1>
+                    Wind:
+                    <br />{" "}
+                    <span className="font-bold">
+                      {test.current.wind_kph} km/h
+                    </span>
+                  </h1>
+                  <h1>
+                    Humidity:
+                    <br />{" "}
+                    <span className="font-bold">{test.current.humidity} %</span>
+                  </h1>
+                </div>
+                <div>
+                  <h1>
+                    Visibility:
+                    <br />{" "}
+                    <span className="font-bold">{test.current.vis_km} km</span>
+                  </h1>
+                  <h1>
+                    Pressure:
+                    <br />{" "}
+                    <span className="font-bold">
+                      {test.current.pressure_mb} mb
+                    </span>
+                  </h1>
+                  <h1>
+                    Cloud:
+                    <br />{" "}
+                    <span className="font-bold">{test.current.cloud} %</span>
+                  </h1>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
