@@ -9,8 +9,8 @@ export default function WeatherCard() {
   const [text, setText] = useState<any>("Enter Your Location");
   const LOCATION = ref?.current?.value;
 
-  function handleSubmit(e: any) {
-    e.preventDefault();
+  function handleSubmit(event: any) {
+    event.preventDefault();
     setState(!state);
   }
   useEffect(() => {
@@ -21,8 +21,10 @@ export default function WeatherCard() {
             `https://api.weatherapi.com/v1/current.json?key=168e245731fe44d0a5051548230707&q=${LOCATION}&aqi=no`
           );
           console.log("🚀 ~ file: WeatherCard.tsx:24 ~ data:", data.data);
-          setTesting((prevState: any) => [...prevState, data.data]);
+          // setTesting((prevState: any) => [...prevState, data.data]);
+          setTesting([data.data, ...testing]);
           if (ref.current) ref.current.value = "";
+          // event.target.reset()
         }
       } catch (error) {
         console.log("error", error);
@@ -45,10 +47,7 @@ export default function WeatherCard() {
           required
           className="p-2 text-black rounded-full"
         />
-        <button
-          type="submit"
-          className=" bg-black text-white p-2 rounded-full"
-        >
+        <button type="submit" className=" bg-black text-white p-2 rounded-full">
           Submit
         </button>
       </form>
@@ -56,7 +55,7 @@ export default function WeatherCard() {
         <div className="text-center text-white mt-5">{text}</div>
       ) : (
         <div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 px-5 gap-5 max-w-7xl m-auto mt-5 text-black w-full">
-          {testing.reverse().map((test: any, index: number) => (
+          {testing.map((test: any, index: number) => (
             <div className={`bg-white p-5 rounded-2xl`} key={index}>
               <div className="flex justify-between">
                 <div className="w-1/2">
