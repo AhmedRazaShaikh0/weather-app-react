@@ -7,16 +7,39 @@ export default function WeatherCard() {
   // const notify = () => toast("Here is your toast.");
   const ref = useRef<any>(null);
   const [data, setData] = useState<any>([]);
+  // console.log("🚀 ~ file: WeatherCard.tsx:10 ~ WeatherCard ~ data:", data)
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(async (pos) => {
+        // console.log("pos: ", pos);
+
+        const response = await axios.get(
+          `http://api.weatherapi.com/v1/current.json?key=3ccbbf01ea7148599c1154007220608&q=${pos.coords.latitude},${pos.coords.longitude}&aqi=no`
+        );
+        // console.log("response: ", response.data);
+
+        setData([response.data, ...data]);
+        // setCurrentWeather(response.data);
+      });
+    } else {
+      console.log("Geolocation is not supported by this browser.");
+    }
+    return () => {
+      // socket.close();
+    };
+  }, []);
 
   async function handleSubmit(event: any) {
     event.preventDefault();
     try {
       setIsLoading(true);
       const response: any = await axios.get(
+        // `https://api.weatherapi.com/v1/current.json?key=168e245731fe44d0a5051548230707&q=${long},${lat}&aqi=no`
         `https://api.weatherapi.com/v1/current.json?key=168e245731fe44d0a5051548230707&q=${ref.current.value}&aqi=no`
       );
-      console.log("response: ", response.data);
+      // console.log("response: ", response.data);
       setIsLoading(false);
       setData([response.data, ...data]);
       toast.success("Weather Fetched Successfully!");
